@@ -100,7 +100,7 @@ for over a tuple target and a bare tuple
 ============================================================
 set
 ============================================================
-{% set a = 1 %}{% set a, b = 1, 2 %}{% set ns.x = ns.x + 1 %}
+{% set a = 1 %}{% set a, b = 1, 2 %}{% set ns.x = ns.x + 1 %}{% set (a, b) = c %}{% set a, (b, c) = d %}
 
 ------------------------------------------------------------
 
@@ -124,6 +124,18 @@ set
         (identifier)
         (identifier))
       (integer)))
+  (set_statement
+    (target_tuple
+      (identifier)
+      (identifier))
+    (identifier))
+  (set_statement
+    (tuple
+      (identifier)
+      (target_tuple
+        (identifier)
+        (identifier)))
+    (identifier))
   (content))
 
 ============================================================

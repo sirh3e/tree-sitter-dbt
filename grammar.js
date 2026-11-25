@@ -47,6 +47,9 @@ export default grammar({
     // {% call (row) macro(row) %}: parameters, not an expression
     [$.parameters, $.tuple],
     [$.parameters, $._primary_expression],
+    // {% set (a, b) = x %}: a target, not the object of an attribute
+    [$._target_item, $._primary_expression],
+    [$.target_tuple, $.tuple],
     // the body of an elif or else ends where a `{%` opens elif, else or the end
     [$.elif_clause],
     [$.else_clause],
@@ -158,7 +161,7 @@ export default grammar({
     set_statement: ($) =>
       seq(
         $._tag_open, 'set',
-        field('left', choice($._set_target, alias($._bare_name_tuple, $.tuple))),
+        field('left', choice($._target, $.attribute)),
         '=',
         field('right', choice($._expression, alias($._bare_tuple, $.tuple))),
         $._tag_close,
@@ -174,9 +177,6 @@ export default grammar({
       ),
 
     _set_target: ($) => choice($.identifier, $.attribute),
-
-    _bare_name_tuple: ($) =>
-      seq($.identifier, repeat1(seq(',', $.identifier)), optional(',')),
 
     raw_block: ($) =>
       seq(
